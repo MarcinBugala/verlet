@@ -20,18 +20,15 @@ public class SoftBodyVerlet : MonoBehaviour
     private GameObject[] gameObjects;
 
 
-    public GameObject leftEye;
-    public GameObject rightEye;
+    public GameObject eyes;
 
-    [Range(0f, 1f)]
-    public float eyesDistance = 1f;
     [Range(0f, 1f)]
     public float eyesLevel = 0f;
 
-    public Vector2 gravity = new Vector2(0, -9.81f);
-    public float rotation = 0f;
+    private Vector2 gravity = new Vector2(0, -9.81f);
+    private float rotation = 0f;
 
-    public Vector2 force = Vector2.zero;
+    private Vector2 force = Vector2.zero;
 
     void Start()
     { 
@@ -45,7 +42,7 @@ public class SoftBodyVerlet : MonoBehaviour
 
             gameObjects[i] = new GameObject();
             gameObjects[i].name = "Particle_" + (i + 1);
-            gameObjects[i].transform.parent = this.transform;
+          //  gameObjects[i].transform.parent = this.transform;
             Rigidbody2D rb = gameObjects[i].AddComponent<Rigidbody2D>();
             rb.position = curPoints[i];
             //rb.angularDrag = 0.5f;
@@ -102,12 +99,29 @@ public class SoftBodyVerlet : MonoBehaviour
         }
 
         Camera.main.transform.rotation = Quaternion.Euler(new Vector3(0, 0, rotation));
+
+        Vector2 avg = Vector2.zero;
+        for (int i = 0; i < segmentCount; ++i)
+        {
+            avg += curPoints[i];
+        }
+        avg /= segmentCount;
+
+        Vector3 p = Camera.main.transform.position;
+        p.x = avg.x;
+        Camera.main.transform.position = p;
+
+        Vector3 pos = this.transform.position;
+        pos.x = avg.x;
+        pos.y = avg.y;
+        transform.position = pos;
     }
 
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         for (int i = 0; i < segmentCount; i++)
         {
            curPoints[i] = gameObjects[i].GetComponent<Rigidbody2D>().position;
@@ -180,7 +194,6 @@ public class SoftBodyVerlet : MonoBehaviour
         }
 
         RedrawMesh();
-        UpdateEyes();
     }
 
 
@@ -190,7 +203,7 @@ public class SoftBodyVerlet : MonoBehaviour
         Vector3 avg = Vector3.zero;
         for (int i = 0; i < segmentCount; ++i)
         {
-            vertices[i + 1] = new Vector3(curPoints[i].x, curPoints[i].y);
+            vertices[i + 1] = transform.InverseTransformPoint(new Vector3(curPoints[i].x, curPoints[i].y));
             avg += vertices[i + 1];
         }
 
@@ -199,17 +212,6 @@ public class SoftBodyVerlet : MonoBehaviour
         GetComponent<MeshFilter>().mesh.vertices = vertices;
     }
 
-    void UpdateEyes()
-    {
-        if (leftEye != null)
-        {
-            leftEye.transform.position = vertices[0] + eyesDistance / 2f * Vector3.left + eyesLevel * Vector3.up;
-        }
-        if (rightEye != null)
-        {
-            rightEye.transform.position = vertices[0] + eyesDistance / 2f * Vector3.right + eyesLevel * Vector3.up;
-        }
-    }
 
     void OnDrawGizmos()
     {

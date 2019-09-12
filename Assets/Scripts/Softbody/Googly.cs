@@ -20,13 +20,13 @@ public class Googly : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 pupilPosNew = 2 * _pupilPos - _pupilPosOld + 0.5f * Physics.gravity * Time.deltaTime * Time.deltaTime;
+        Vector3 pupilPosNew = 2 * _pupilPos - _pupilPosOld + 0.5f * Physics.gravity * Time.fixedDeltaTime * Time.fixedDeltaTime;
 
         pupilPosNew = transform.TransformPoint(ClampPupilToLocal(pupilPosNew));
 
         _pupilPosOld = _pupilPos;
         _pupilPos = pupilPosNew;
-        _interpolation += Time.deltaTime;
+        _interpolation += Time.fixedDeltaTime;
     }
 
     // Update is called once per frame
