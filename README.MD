@@ -1,5 +1,5 @@
 Useful links:
 
-https://github.com/zalo/MathUtilities
-https://subprotocol.com/system/spider.html
-https://codepen.io/dissimulate/pen/KrAwx
+https://github.com/zalo/MathUtilities<br/>
+https://subprotocol.com/system/spider.html<br/>
+https://codepen.io/dissimulate/pen/KrAwx<br/>
